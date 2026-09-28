@@ -1,0 +1,117 @@
+title = "Fleet Health Check"
+order = 2
+powers = ["try / except ValueError", "except EOFError", "while True + break", "counters"]
+
+story = '''
+Roost pings every machine on your tailnet. The raw ping log is a mess: some
+machines time out, and some lines are garbage from a half-broken script. Turn
+the mess into a health report without crashing on any of it.
+'''
+
+task = '''
+Read ping results one line at a time with input() (no prompt text needed).
+Stop at an empty line, OR at the end of input (that raises EOFError: on
+Windows you can send it by typing Ctrl+Z then Enter). Handle both.
+
+Each line is one of:
+  a number of milliseconds (like 23.4)   ->  online
+  timeout (any capitalization)           ->  unreachable
+  anything else                          ->  garbage (count it, skip it)
+
+Then print:
+  Online: <count>
+  Unreachable: <count>
+  Garbage: <count>
+  Average ping: <average of the online pings, 1 decimal> ms
+
+If no machine is online, the last line is instead:
+  Average ping: n/a
+'''
+
+example = '''
+$ python fleet_health.py
+23.4
+18
+timeout
+31.6
+
+Online: 3
+Unreachable: 1
+Garbage: 0
+Average ping: 24.3 ms
+'''
+
+hint = "One loop, and each line goes down one of three roads: empty (stop), timeout (count it), or try to make it a float, where the except catches the garbage."
+
+syntax = '''
+try:
+    line = input()
+except EOFError:
+    break
+
+try:
+    ms = float(line)
+except ValueError:
+    ...
+'''
+
+pseudocode = '''
+online, unreachable, garbage <- 0;  total <- 0
+loop:
+    read a line (end of input -> stop)
+    empty line -> stop
+    timeout (any case) -> unreachable + 1
+    otherwise try float -> online + 1, add it to total
+              ValueError -> garbage + 1
+print the three counts
+online > 0 ?  print the average with 1 decimal  :  print n/a
+'''
+
+extend = [
+  "Also report the slowest online ping.",
+  "Flag anything over 100 ms as slow and count those separately.",
+]
+
+[[checks]]
+name = "The example"
+stdin = "23.4\n18\ntimeout\n31.6\n\n"
+expect = ['re:Online:\s*3\b', 're:Unreachable:\s*1\b', 're:Garbage:\s*0\b', 're:Average ping:\s*24\.3 ms']
+show = '''
+Online: 3
+Unreachable: 1
+Garbage: 0
+Average ping: 24.3 ms
+'''
+
+[[checks]]
+name = "Garbage in the log"
+stdin = "  TIMEOUT \nping failed\n12\n#$%\n\n"
+expect = ['re:Online:\s*1\b', 're:Unreachable:\s*1\b', 're:Garbage:\s*2\b', 're:Average ping:\s*12\.0 ms']
+show = '''
+Online: 1
+Unreachable: 1
+Garbage: 2
+Average ping: 12.0 ms
+'''
+
+[[checks]]
+name = "Everything is down"
+stdin = "timeout\nTimeout\n\n"
+expect = ['re:Online:\s*0\b', 're:Unreachable:\s*2\b', 're:Garbage:\s*0\b', "Average ping: n/a"]
+show = '''
+Online: 0
+Unreachable: 2
+Garbage: 0
+Average ping: n/a
+'''
+
+[[checks]]
+name = "No empty line: the input just ends (EOFError)"
+stdin = "40\n50"
+expect = ['re:Online:\s*2\b', 're:Average ping:\s*45\.0 ms']
+show = '''
+Online: 2
+Unreachable: 0
+Garbage: 0
+Average ping: 45.0 ms
+'''

@@ -1,0 +1,82 @@
+# The CS50P map, in course order. Links only: the course itself lives at
+# https://cs50.harvard.edu/python/ and nothing from it is copied here.
+#
+#   id     -> also the folder name under my-code/
+#   dir    -> this unit's folder under sidequests/ (recall.toml + one .toml per sidequest)
+
+[[unit]]
+id = "functions-variables"
+label = "Week 0"
+title = "Functions, Variables"
+url = "https://cs50.harvard.edu/python/weeks/0/"
+dir = "w0-functions-variables"
+
+[[unit]]
+id = "conditionals"
+label = "Week 1"
+title = "Conditionals"
+url = "https://cs50.harvard.edu/python/weeks/1/"
+dir = "w1-conditionals"
+
+[[unit]]
+id = "loops"
+label = "Week 2"
+title = "Loops"
+url = "https://cs50.harvard.edu/python/weeks/2/"
+dir = "w2-loops"
+
+[[unit]]
+id = "exceptions"
+label = "Week 3"
+title = "Exceptions"
+url = "https://cs50.harvard.edu/python/weeks/3/"
+dir = "w3-exceptions"
+
+[[unit]]
+id = "libraries"
+label = "Week 4"
+title = "Libraries"
+url = "https://cs50.harvard.edu/python/weeks/4/"
+dir = "w4-libraries"
+
+[[unit]]
+id = "unit-tests"
+label = "Week 5"
+title = "Unit Tests"
+url = "https://cs50.harvard.edu/python/weeks/5/"
+dir = "w5-unit-tests"
+
+[[unit]]
+id = "file-io"
+label = "Week 6"
+title = "File I/O"
+url = "https://cs50.harvard.edu/python/weeks/6/"
+dir = "w6-file-io"
+
+[[unit]]
+id = "regular-expressions"
+label = "Week 7"
+title = "Regular Expressions"
+url = "https://cs50.harvard.edu/python/weeks/7/"
+dir = "w7-regular-expressions"
+
+[[unit]]
+id = "oop"
+label = "Week 8"
+title = "Object-Oriented Programming"
+url = "https://cs50.harvard.edu/python/weeks/8/"
+dir = "w8-oop"
+
+[[unit]]
+id = "et-cetera"
+label = "Week 9"
+title = "Et Cetera"
+url = "https://cs50.harvard.edu/python/weeks/9/"
+dir = "w9-et-cetera"
+
+[[unit]]
+id = "final-project"
+label = "Final"
+title = "Final Project"
+url = "https://cs50.harvard.edu/python/project/"
+dir = "final-project"

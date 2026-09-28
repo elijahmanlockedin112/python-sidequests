@@ -1,0 +1,109 @@
+title = "Ao5: DNF Edition"
+order = 1
+powers = ["try / except ValueError", "while True + return or break", "lists", "sorted() or .sort()"]
+
+story = '''
+Official 3x3 results are an average of 5 (Ao5): throw out your best and worst
+solve, average the middle three. Now add real life: DNFs, and a scorekeeper
+who fat-fingers the keyboard.
+'''
+
+task = '''
+Ask for 5 solve times, one at a time (prompt however you like).
+Each one is either a number of seconds (like 11.42) or DNF (any capitalization).
+If an entry is anything else, print  Not a time  and ask again for that same solve.
+
+Then compute the Ao5:
+  - drop the best time and the worst time
+  - average the middle three
+  - a DNF counts as the worst possible time
+  - two or more DNFs: the whole average is DNF
+
+Print one line:
+  Ao5: <average, 2 decimals>
+or
+  Ao5: DNF
+'''
+
+example = '''
+$ python ao5_dnf.py
+Solve 1: 10
+Solve 2: dnf
+Solve 3: 12
+Solve 4: eleven
+Not a time
+Solve 4: 11
+Solve 5: 9
+Ao5: 11.00
+'''
+
+hint = "Write a function get_time() that keeps asking until it has a float or a DNF, then returns it. Pick a way to store DNF that sorts as the worst time of all."
+
+syntax = '''
+while True:
+    try:
+        x = float(text)
+    except ValueError:
+        ...
+    else:
+        ...
+
+float("inf")                 # bigger than every number
+sorted([3, 1, 2])  ->  [1, 2, 3]
+items[1:4]                   # the 2nd, 3rd and 4th items
+items.count(x)               # how many times x appears
+'''
+
+pseudocode = '''
+get_time():
+    loop forever:
+        text <- ask for a time
+        DNF (any case)?  return infinity
+        try: return text as a float
+        except ValueError: print Not a time
+
+main:
+    times <- five results from get_time()
+    two or more are infinity?  print Ao5: DNF
+    otherwise: sort them, keep the middle three, average, print with 2 decimals
+'''
+
+extend = [
+  "Also print the best single and the Mo3 of the first three solves.",
+  "Accept a +2 written like 11.42+ and add the 2 seconds for it.",
+]
+
+[[checks]]
+name = "Five clean solves"
+stdin = "10.5\n12.25\n9.75\n11.00\n13.5\n"
+expect = ['re:Ao5:\s*11\.25\b']
+show = "Ao5: 11.25"
+
+[[checks]]
+name = "One DNF (it becomes the dropped worst)"
+stdin = "10\nDNF\n12\n11\n9\n"
+expect = ['re:Ao5:\s*11\.00\b']
+show = "Ao5: 11.00"
+
+[[checks]]
+name = "Two DNFs"
+stdin = "dnf\n10\nDNF\n12\n11\n"
+expect = ['re:Ao5:\s*DNF']
+show = "Ao5: DNF"
+
+[[checks]]
+name = "Garbage typing (asks again each time)"
+stdin = "abc\n10\n\n11\nfast\n12\n13\n14\n"
+expect = ["Not a time", "Not a time", "Not a time", 're:Ao5:\s*12\.00\b']
+show = '''
+Not a time
+Not a time
+Not a time
+Ao5: 12.00
+'''
+
+[[checks]]
+name = "Rounding to 2 decimals"
+stdin = "9.123\n9.456\n9.789\n8\n15\n"
+expect = ['re:Ao5:\s*9\.46\b']
+show = "Ao5: 9.46"

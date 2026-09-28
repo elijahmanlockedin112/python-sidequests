@@ -1,0 +1,91 @@
+title = "Pi Hunter"
+order = 3
+powers = ["while loops", "float()", "abs()", "f-strings with :.6f"]
+
+story = '''
+In 1674 Leibniz found a way to reach pi using nothing but fractions. It's
+beautiful and painfully slow. How slow? Hunt it down and count.
+'''
+
+task = '''
+The Leibniz series creeps toward pi:
+  pi = 4/1 - 4/3 + 4/5 - 4/7 + 4/9 - ...
+
+Ask for a tolerance, like 0.01.
+
+Add terms one at a time until your estimate is within that tolerance of pi
+(the distance between them is less than the tolerance).
+Use this value of pi in your code:  3.141592653589793
+
+Print exactly two lines:
+  Terms: <how many terms it took>
+  Estimate: <your estimate, 6 decimal places>
+'''
+
+example = '''
+$ python pi_hunter.py
+Tolerance: 0.5
+Terms: 2
+Estimate: 2.666667
+'''
+
+hint = "You don't know ahead of time how many terms you need, so this is a while loop. Keep track of three things: the estimate, the term count, and whether the next term adds or subtracts."
+
+syntax = '''
+while distance >= tolerance:
+    ...
+abs(-0.25)          ->  0.25     (distance ignores direction)
+sign = -sign        # flips 1 -> -1 -> 1 -> ...
+f"{2/3:.6f}"        ->  "0.666667"
+'''
+
+pseudocode = '''
+PI <- 3.141592653589793
+estimate <- 0, terms <- 0, sign <- 1, denominator <- 1
+while the distance from estimate to PI is not below the tolerance:
+    estimate <- estimate + sign * 4 / denominator
+    terms <- terms + 1
+    flip the sign, add 2 to the denominator
+print Terms and Estimate
+'''
+
+extend = [
+  "The Nilakantha series (3 + 4/(2*3*4) - 4/(4*5*6) + ...) is much faster. Race the two.",
+  "Print every 10th estimate and watch it wobble toward pi.",
+]
+
+[[checks]]
+name = "The example"
+stdin = "0.5\n"
+expect = ['re:Terms:\s*2\b', 're:Estimate:\s*2\.666667']
+show = '''
+Terms: 2
+Estimate: 2.666667
+'''
+
+[[checks]]
+name = "A loose tolerance (one term is enough)"
+stdin = "1\n"
+expect = ['re:Terms:\s*1\b', 're:Estimate:\s*4\.000000']
+show = '''
+Terms: 1
+Estimate: 4.000000
+'''
+
+[[checks]]
+name = "Within 0.01"
+stdin = "0.01\n"
+expect = ['re:Terms:\s*100\b', 're:Estimate:\s*3\.131593']
+show = '''
+Terms: 100
+Estimate: 3.131593
+'''
+
+[[checks]]
+name = "Within 0.001"
+stdin = "0.001\n"
+expect = ['re:Terms:\s*1000\b', 're:Estimate:\s*3\.140593']
+show = '''
+Terms: 1000
+Estimate: 3.140593
+'''

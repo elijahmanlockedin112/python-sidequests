@@ -1,0 +1,118 @@
+title = "Power-Up Brain"
+order = 1
+powers = ["if / elif / else", "and / or", "==", "match (optional)", ".strip()  .lower()"]
+
+story = '''
+Your Mario bot needs a brain for power-ups. Given Mario's current form and what
+just happened to him, what is he now?
+'''
+
+task = '''
+Ask for Mario's current form:  small, super, or fire
+Then ask what happened:        mushroom, flower, or hit
+
+The rules (Super Mario Bros., 1985):
+  mushroom:  small becomes super. super and fire stay as they are.
+  flower:    small becomes super. super becomes fire. fire stays fire.
+  hit:       super and fire both shrink to small. small loses a life.
+
+Print one line:
+  Mario is now <form>
+or, when small Mario gets hit:
+  Lost a life!
+
+If either answer isn't one of the words above, print:
+  Unknown input
+
+Ignore capital letters and extra spaces in what the user types.
+'''
+
+example = '''
+$ python power_up.py
+Form: super
+What happened? flower
+Mario is now fire
+'''
+
+hint = "Throw out bad input first. Then pick the event (mushroom / flower / hit), and inside each one, look at the form."
+
+syntax = '''
+if form == "small" and event == "hit":
+    ...
+elif event == "mushroom" or event == "flower":
+    ...
+
+match event:
+    case "mushroom":
+        ...
+    case _:
+        ...
+'''
+
+pseudocode = '''
+form, event <- ask, then strip and lower-case both
+if form isn't small/super/fire, or event isn't mushroom/flower/hit:
+    print Unknown input
+otherwise, if the event is hit:
+    small -> Lost a life!    anything else -> Mario is now small
+otherwise, if it's a mushroom:
+    small -> super           anything else stays the same
+otherwise (flower):
+    small -> super           super or fire -> fire
+'''
+
+extend = [
+  "Add 'star': while starred, a hit changes nothing.",
+  "Start with 3 lives and print how many are left after a hit on small Mario.",
+]
+
+[[checks]]
+name = "Small Mario eats a mushroom"
+stdin = "small\nmushroom\n"
+expect = ["Mario is now super"]
+show = "Mario is now super"
+
+[[checks]]
+name = "Super Mario grabs a flower"
+stdin = "super\nflower\n"
+expect = ["Mario is now fire"]
+show = "Mario is now fire"
+
+[[checks]]
+name = "Fire Mario gets hit"
+stdin = "fire\nhit\n"
+expect = ["Mario is now small"]
+show = "Mario is now small"
+
+[[checks]]
+name = "Small Mario gets hit (messy typing)"
+stdin = "  SMALL \n Hit\n"
+expect = ["Lost a life!"]
+reject = ["Mario is now"]
+show = "Lost a life!"
+
+[[checks]]
+name = "Small Mario grabs a flower"
+stdin = "small\nflower\n"
+expect = ["Mario is now super"]
+show = "Mario is now super"
+
+[[checks]]
+name = "Fire Mario eats a mushroom"
+stdin = "fire\nmushroom\n"
+expect = ["Mario is now fire"]
+show = "Mario is now fire"
+
+[[checks]]
+name = "An event that doesn't exist"
+stdin = "super\nstar\n"
+expect = ["Unknown input"]
+reject = ["Mario is now", "Lost a life"]
+show = "Unknown input"
+
+[[checks]]
+name = "A form that doesn't exist"
+stdin = "tiny\nmushroom\n"
+expect = ["Unknown input"]
+reject = ["Mario is now", "Lost a life"]
+show = "Unknown input"

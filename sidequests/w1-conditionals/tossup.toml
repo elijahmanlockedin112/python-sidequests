@@ -1,0 +1,98 @@
+title = "Tossup Scorer"
+order = 2
+powers = ["def ... return True / False", "if / elif / else", "and / or", ".lower()"]
+
+story = '''
+Quiz Bowl, tossup scoring. You buzzed. Were you right? Were you early? Were you
+in power? Your program settles it.
+'''
+
+task = '''
+Ask three yes/no questions, in this order:
+  1. Correct?
+  2. Did you buzz before the question finished?
+  3. Was it before the power mark (*)?
+
+Score it:
+  correct, early, and before the power mark   ->  POWER +15
+  correct (any other way)                     ->  +10
+  wrong, and you buzzed early (a neg)         ->  NEG -5
+  wrong, after the question finished          ->  0 (no penalty)
+
+Print exactly one of those four results.
+
+Accept y, yes, n and no in any capitalization. Write a function is_yes(answer)
+that returns True or False, and use it for all three questions.
+'''
+
+example = '''
+$ python tossup.py
+Correct? y
+Buzzed before the question finished? YES
+Before the power mark? no
++10
+'''
+
+hint = "Write is_yes first and test it by itself. After that, the scoring is: right or wrong, then early or not."
+
+syntax = '''
+def is_positive(n):
+    return n > 0          # a comparison is already True or False
+
+if a and b:
+    ...
+elif a:
+    ...
+'''
+
+pseudocode = '''
+is_yes(answer): lower-case it; True if it's "y" or "yes", otherwise False
+
+main:
+    correct <- is_yes(ask question 1)
+    early   <- is_yes(ask question 2)
+    power   <- is_yes(ask question 3)
+    correct and early and power  -> POWER +15
+    correct                      -> +10
+    early                        -> NEG -5
+    anything else                -> 0 (no penalty)
+'''
+
+extend = [
+  "Score a bonus too: three parts, 10 points each.",
+  "After Week 2: score a whole packet of tossups in a loop and print the total.",
+]
+
+[[checks]]
+name = "A power"
+stdin = "y\ny\ny\n"
+expect = ["POWER +15"]
+show = "POWER +15"
+
+[[checks]]
+name = "Right, early, out of power"
+stdin = "yes\nyes\nno\n"
+expect = ["+10"]
+reject = ["POWER +15", "NEG -5"]
+show = "+10"
+
+[[checks]]
+name = "Right after the question ended (can't be power)"
+stdin = "Y\nno\nyes\n"
+expect = ["+10"]
+reject = ["POWER +15", "NEG -5"]
+show = "+10"
+
+[[checks]]
+name = "A neg"
+stdin = "n\ny\nn\n"
+expect = ["NEG -5"]
+reject = ["+10", "POWER +15"]
+show = "NEG -5"
+
+[[checks]]
+name = "Wrong, but you waited"
+stdin = "NO\nNo\nno\n"
+expect = ["0 (no penalty)"]
+reject = ["NEG -5", "+10", "POWER +15"]
+show = "0 (no penalty)"

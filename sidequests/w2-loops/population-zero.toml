@@ -1,0 +1,110 @@
+title = "Population Zero"
+order = 1
+powers = ["for loops and range()", "if / elif / else", "%  and  //", "break"]
+
+story = '''
+A colony starts with 12 organisms. Every day its population changes according
+to a strange rule. Simulate 30 days and discover whether the colony survives.
+'''
+
+task = '''
+Ask for the starting population (the story says 12; try others too).
+
+Each day, apply exactly ONE rule. Check them in this order:
+  1. Over 100:  overcrowding. The population halves (round down).  129 -> 64
+  2. Even:      it grows by half of itself.                         24 -> 36
+  3. Odd:       a predator eats 7.                                  27 -> 20
+
+If the colony is still alive at the end of a day, print:
+  Day <n>: <population>
+
+If the population hits 0 or below, print this instead, and stop:
+  Colony collapsed on day <n>
+
+If it makes it through day 30, finish with:
+  Colony survived with <population> organisms
+'''
+
+example = '''
+$ python population_zero.py
+Starting population: 12
+Day 1: 18
+Day 2: 27
+Day 3: 20
+...
+'''
+
+hint = "One pass of the loop is one day. Inside it: pick the rule (if / elif / else), update the number, then check whether the colony died."
+
+syntax = '''
+for day in range(1, 31):     # day is 1, 2, ... 30
+    ...
+    if something:
+        break                # leave the loop early
+
+n = n // 2                   # halve, rounding down
+'''
+
+pseudocode = '''
+population <- starting number
+for each day from 1 to 30:
+    over 100 -> halve it (round down)
+    even     -> add half of it
+    odd      -> subtract 7
+    if population is 0 or less:
+        print the collapse line, remember it died, stop the loop
+    print the Day line
+if it never died: print the survived line
+'''
+
+extend = [
+  "Loop around your loop: which starting populations from 1 to 200 survive all 30 days?",
+  "Add a plague on every 10th day that takes a third of the colony.",
+]
+
+[[checks]]
+name = "The story's colony of 12"
+stdin = "12\n"
+expect = ['re:Day 1:\s*18\b', 're:Day 2:\s*27\b', 're:Day 3:\s*20\b', 're:Day 30:\s*74\b', 'Colony survived with 74 organisms']
+reject = ["collapsed"]
+show = '''
+Day 1: 18
+Day 2: 27
+Day 3: 20
+...
+Day 30: 74
+Colony survived with 74 organisms
+'''
+
+[[checks]]
+name = "A colony of 5 (it doesn't last)"
+stdin = "5\n"
+expect = ["Colony collapsed on day 1"]
+reject = ["Day 1: -2", "survived"]
+show = "Colony collapsed on day 1"
+
+[[checks]]
+name = "A colony of 9"
+stdin = "9\n"
+expect = ['re:Day 1:\s*2\b', 're:Day 2:\s*3\b', "Colony collapsed on day 3"]
+reject = ["Day 3: -4", "survived"]
+show = '''
+Day 1: 2
+Day 2: 3
+Colony collapsed on day 3
+'''
+
+[[checks]]
+name = "Starting at exactly 100 (not over 100)"
+stdin = "100\n"
+expect = ['re:Day 1:\s*150\b', 're:Day 2:\s*75\b', 're:Day 4:\s*102\b', 're:Day 30:\s*81\b', "Colony survived with 81 organisms"]
+reject = ["collapsed"]
+show = '''
+Day 1: 150
+Day 2: 75
+Day 3: 68
+Day 4: 102
+...
+Day 30: 81
+Colony survived with 81 organisms
+'''

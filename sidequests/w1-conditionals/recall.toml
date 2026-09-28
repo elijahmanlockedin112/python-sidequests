@@ -1,0 +1,42 @@
+[[prompt]]
+id = "hot-cold"
+q = "Write if / elif / else that prints hot when temp is above 30, cold below 10, and fine otherwise."
+a = '''
+if temp > 30:
+    print("hot")
+elif temp < 10:
+    print("cold")
+else:
+    print("fine")
+'''
+
+[[prompt]]
+id = "equals"
+q = "What is the difference between = and == ?"
+a = "= assigns a value to a variable. == compares two values and gives back True or False."
+
+[[prompt]]
+id = "is-even"
+q = "Write is_even(n) that returns True or False, without using the word if."
+a = '''
+def is_even(n):
+    return n % 2 == 0
+'''
+
+[[prompt]]
+id = "and-or"
+q = "How do you require two conditions to BOTH be true? How about EITHER one?"
+a = "and / or.   Example: if x > 0 and x < 10:   ...   if move == \"R\" or move == \"L\":"
+
+[[prompt]]
+id = "match"
+q = "Write a match statement on move: one case for \"R\", one case that covers both \"L\" and \"L'\", and a catch-all."
+a = '''
+match move:
+    case "R":
+        ...
+    case "L" | "L'":
+        ...
+    case _:
+        ...
+'''

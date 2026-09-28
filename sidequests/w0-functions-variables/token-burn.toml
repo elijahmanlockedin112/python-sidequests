@@ -1,0 +1,98 @@
+title = "Token Burn"
+order = 3
+powers = ["def ... return (with two parameters)", "int() / float()", "arithmetic", "f-strings with :,.2f"]
+
+story = '''
+You're wiring an AI feature into a Clarion product. The model bills per token,
+and a surprise bill is not an option. Before you ship, you want a calculator
+that says what a day and a month will actually cost.
+'''
+
+task = '''
+Prices (store them in variables in your code):
+  input tokens:   $3.00 per million
+  output tokens:  $15.00 per million
+
+Ask for, in this order:
+  1. requests per day
+  2. average input tokens per request
+  3. average output tokens per request
+
+Print exactly two lines, both with 2 decimals and commas for thousands:
+  Per day: $<cost>
+  Per month: $<30 days of that>
+
+Write a function cost(tokens, price_per_million) that returns dollars, and use
+it for both the input and the output tokens.
+'''
+
+example = '''
+$ python token_burn.py
+Requests per day: 1000
+Average input tokens: 1200
+Average output tokens: 300
+Per day: $8.10
+Per month: $243.00
+'''
+
+hint = "Get cost() right on its own first: cost(1000000, 3.00) should give back 3.0. Then call it twice and add."
+
+syntax = '''
+def area(width, height):
+    return width * height
+
+1_000_000                 # underscores make big numbers readable
+f"{2025.5:,.2f}"   ->  "2,025.50"
+'''
+
+pseudocode = '''
+cost(tokens, price): how many millions of tokens, times the price
+
+main:
+    ask for requests, input tokens, output tokens (as ints)
+    daily input tokens  <- requests * input tokens
+    daily output tokens <- requests * output tokens
+    day <- cost(daily input, 3.00) + cost(daily output, 15.00)
+    print day, then day * 30, each with commas and 2 decimals
+'''
+
+extend = [
+  "Add cached input tokens at $0.30 per million as a fourth question.",
+  "Flip it around: on a $20/month budget, how many requests per day can you afford?",
+]
+
+[[checks]]
+name = "The example"
+stdin = "1000\n1200\n300\n"
+expect = ['re:Per day:\s*\$8\.10\b', 're:Per month:\s*\$243\.00\b']
+show = '''
+Per day: $8.10
+Per month: $243.00
+'''
+
+[[checks]]
+name = "A busy app (needs a thousands comma)"
+stdin = "5000\n2000\n500\n"
+expect = ['re:Per day:\s*\$67\.50\b', 're:Per month:\s*\$2,025\.00\b']
+show = '''
+Per day: $67.50
+Per month: $2,025.00
+'''
+
+[[checks]]
+name = "One tiny request (still 2 decimals)"
+stdin = "1\n1\n1\n"
+expect = ['re:Per day:\s*\$0\.00\b', 're:Per month:\s*\$0\.00\b']
+show = '''
+Per day: $0.00
+Per month: $0.00
+'''
+
+[[checks]]
+name = "A small side project"
+stdin = "400\n500\n250\n"
+expect = ['re:Per day:\s*\$2\.10\b', 're:Per month:\s*\$63\.00\b']
+show = '''
+Per day: $2.10
+Per month: $63.00
+'''

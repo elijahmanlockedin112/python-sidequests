@@ -1,0 +1,81 @@
+title = "Launch Post"
+order = 1
+exact_case = true
+powers = ["input()", ".strip()  .upper()  .capitalize()", "float()", "f-strings with :.2f"]
+
+story = '''
+Clarion Technologies is shipping a new product and you're writing the launch
+post. Your co-founder (also you) types everything sloppily: random spaces,
+random caps. Your program cleans it up so every launch post looks the same.
+'''
+
+task = '''
+Ask for three things, in this order:
+  1. the product name
+  2. a one-line tagline (no period at the end)
+  3. the monthly price, as a number like 9 or 4.5
+
+Then print exactly two lines:
+  Introducing <PRODUCT NAME IN ALL CAPS>
+  <Tagline with only its first letter capitalized>. $<price, 2 decimals>/month
+
+Spaces typed around any answer should disappear.
+'''
+
+example = '''
+$ python launch_post.py
+Product:   document x-ray
+Tagline: find HIDDEN prompt injections in resumes
+Price: 9
+Introducing DOCUMENT X-RAY
+Find hidden prompt injections in resumes. $9.00/month
+'''
+
+hint = "Clean each answer the moment you get it (strip it). Transform it only when you print."
+
+syntax = '''
+text = input("Prompt: ").strip()
+"hello WORLD".capitalize()   ->  "Hello world"
+"roost".upper()              ->  "ROOST"
+f"{4.5:.2f}"                 ->  "4.50"   (only works on a number, so float() first)
+'''
+
+pseudocode = '''
+name    <- ask for the product, stripped
+tagline <- ask for the tagline, stripped
+price   <- ask for the price, stripped, turned into a float
+print "Introducing " + the name in capitals
+print the tagline capitalized, then ". $", the price with 2 decimals, "/month"
+'''
+
+extend = [
+  "Print how many characters the post is, using len().",
+  "Ask for a launch date and add a third line: Ships <date>.",
+]
+
+[[checks]]
+name = "The example"
+stdin = "  document x-ray\nfind HIDDEN prompt injections in resumes\n9\n"
+expect = ["Introducing DOCUMENT X-RAY", "Find hidden prompt injections in resumes. $9.00/month"]
+show = '''
+Introducing DOCUMENT X-RAY
+Find hidden prompt injections in resumes. $9.00/month
+'''
+
+[[checks]]
+name = "Sloppy spaces, a price with cents"
+stdin = "   roost  \n  run your whole fleet from one place   \n 4.5 \n"
+expect = ["Introducing ROOST", "Run your whole fleet from one place. $4.50/month"]
+show = '''
+Introducing ROOST
+Run your whole fleet from one place. $4.50/month
+'''
+
+[[checks]]
+name = "Random caps everywhere"
+stdin = "SyNaPtIc\nREMEMBER EVERYTHING YOU LEARN\n12\n"
+expect = ["Introducing SYNAPTIC", "Remember everything you learn. $12.00/month"]
+show = '''
+Introducing SYNAPTIC
+Remember everything you learn. $12.00/month
+'''

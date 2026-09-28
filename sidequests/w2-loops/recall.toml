@@ -1,0 +1,47 @@
+[[prompt]]
+id = "one-to-ten"
+q = "Without looking it up, write a loop that prints 1 through 10."
+a = '''
+for i in range(1, 11):
+    print(i)
+'''
+
+[[prompt]]
+id = "until"
+q = "What would you use if you needed to repeat something until a condition changes?"
+a = "A while loop:  while condition: ...   It repeats until the condition is False (or you break out)."
+
+[[prompt]]
+id = "list-loop"
+q = "names = [\"Ada\", \"Grace\", \"Alan\"]. Print each name on its own line, without range()."
+a = '''
+for name in names:
+    print(name)
+'''
+
+[[prompt]]
+id = "dict-loop"
+q = "pb = {\"3x3\": 9.87, \"2x2\": 3.1}. Loop over it and print each event with its time."
+a = '''
+for event in pb:
+    print(event, pb[event])
+'''
+
+[[prompt]]
+id = "break-continue"
+q = "How do you leave a loop early? How do you skip straight to the next pass?"
+a = "break leaves the loop. continue jumps to the next iteration."
+
+[[prompt]]
+id = "grid"
+q = "Print a 3 x 3 square of # characters. Can you do it two different ways?"
+a = '''
+for _ in range(3):
+    print("#" * 3)
+
+or with nested loops:
+for row in range(3):
+    for col in range(3):
+        print("#", end="")
+    print()
+'''

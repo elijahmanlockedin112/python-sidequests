@@ -1,0 +1,97 @@
+title = "Scramble Inverter"
+order = 2
+exact_case = true
+powers = ["lists and .split()", "for loops (backwards)", "if / elif / else", "len()"]
+
+story = '''
+Every speedcuber has done it: scrambled a cube, then wanted it solved again
+without solving it. Undo the scramble. Your program writes the undo for you.
+'''
+
+task = '''
+Ask for a scramble in WCA notation, like:  R U R' U' F2
+
+Moves are separated by spaces. Each move is a face letter, optionally followed by
+  '   a prime (counter-clockwise)
+  2   a half turn
+
+To undo a scramble, do its moves in reverse order and flip each one:
+  R -> R'      R' -> R      R2 -> R2
+
+Print exactly two lines:
+  Moves: <how many moves>
+  Inverse: <the undo, one space between moves>
+
+Capital letters matter here: in cube notation, u is a different move than U.
+'''
+
+example = '''
+$ python scramble_inverter.py
+Scramble: R U R' U' F2
+Moves: 5
+Inverse: F2 U R U' R'
+'''
+
+hint = "Split the scramble into a list. Walk the list from the end to the start. For each move, its last character tells you how to flip it."
+
+syntax = '''
+"R U F2".split()        ->  ["R", "U", "F2"]    (extra spaces are ignored)
+for x in reversed(items):
+    ...
+move[-1]                ->  the last character
+move[:-1]               ->  everything except the last character
+" ".join(["a", "b"])    ->  "a b"
+'''
+
+pseudocode = '''
+moves <- the scramble split on spaces
+inverse <- an empty list
+for each move, from last to first:
+    ends with '  -> drop the '
+    ends with 2  -> keep it as it is
+    otherwise    -> add a '
+    append the flipped move to inverse
+print Moves: how many moves there are
+print Inverse: the inverse moves joined with spaces
+'''
+
+extend = [
+  "Simplify first: R R becomes R2, and R R' cancels out completely.",
+  "After Week 4: generate a random 20-move scramble that never turns the same face twice in a row.",
+]
+
+[[checks]]
+name = "The example"
+stdin = "R U R' U' F2\n"
+expect = ["re:Moves: 5$", "re:Inverse: F2 U R U' R'$"]
+show = '''
+Moves: 5
+Inverse: F2 U R U' R'
+'''
+
+[[checks]]
+name = "A single move"
+stdin = "F\n"
+expect = ["re:Moves: 1$", "re:Inverse: F'$"]
+show = '''
+Moves: 1
+Inverse: F'
+'''
+
+[[checks]]
+name = "Sloppy spacing"
+stdin = "  D2   L'  B  \n"
+expect = ["re:Moves: 3$", "re:Inverse: B' L D2$"]
+show = '''
+Moves: 3
+Inverse: B' L D2
+'''
+
+[[checks]]
+name = "Undo a Sune"
+stdin = "R U R' U R U2 R'\n"
+expect = ["re:Moves: 7$", "re:Inverse: R U2 R' U' R U' R'$"]
+show = '''
+Moves: 7
+Inverse: R U2 R' U' R U' R'
+'''

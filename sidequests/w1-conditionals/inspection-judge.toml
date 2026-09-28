@@ -1,0 +1,108 @@
+title = "Inspection Judge"
+order = 3
+powers = ["float()", "if / elif / else", "<  <=  >", "f-strings with :.2f"]
+
+story = '''
+WCA competition, 3x3. You get 15 seconds to inspect the cube before the timer
+starts. Go over and the judge penalizes you. You're the judge now.
+'''
+
+task = '''
+Ask for, in this order:
+  1. inspection time, in seconds (like 12.5)
+  2. solve time, in seconds (like 9.87)
+  3. your current personal best (PB), in seconds
+
+Inspection rules:
+  15 seconds or less          ->  no penalty
+  over 15, up to 17 seconds   ->  +2 seconds
+  over 17 seconds             ->  DNF (did not finish)
+
+Print the official result, always with 2 decimals:
+  Result: 9.87
+  Result: 11.87 (+2)
+  Result: DNF
+
+Then, only if the result beats your PB, print:
+  New PB!
+A DNF never beats anything.
+'''
+
+example = '''
+$ python inspection_judge.py
+Inspection: 16.3
+Solve: 9.87
+PB: 12.00
+Result: 11.87 (+2)
+New PB!
+'''
+
+hint = "Work out the penalty first (none, +2, or DNF). Only then decide what to print and whether it's a PB."
+
+syntax = '''
+if x <= 15:
+    ...
+elif x <= 17:
+    ...
+else:
+    ...
+
+f"{9.5:.2f}"   ->  "9.50"
+'''
+
+pseudocode = '''
+inspection, solve, pb <- three floats
+if inspection is over 17:
+    print Result: DNF
+otherwise:
+    if inspection is over 15: final <- solve + 2   (remember it was penalized)
+    else:                     final <- solve
+    print Result: final with 2 decimals, plus " (+2)" if penalized
+    if final is less than pb: print New PB!
+'''
+
+extend = [
+  "Stack penalties: ask 'Off by one move at the end? y/n' for another +2.",
+  "Print how far off your PB you were, like: 0.42 off PB.",
+]
+
+[[checks]]
+name = "Clean solve, new PB"
+stdin = "12\n9.87\n10.21\n"
+expect = ["Result: 9.87", "New PB!"]
+reject = ["(+2)", "Result: DNF"]
+show = '''
+Result: 9.87
+New PB!
+'''
+
+[[checks]]
+name = "Over 15: +2 costs you the PB"
+stdin = "16.3\n9.87\n10.21\n"
+expect = ["Result: 11.87 (+2)"]
+reject = ["New PB", "Result: DNF"]
+show = "Result: 11.87 (+2)"
+
+[[checks]]
+name = "Over 17: DNF (even with a fast solve)"
+stdin = "18\n7.02\n10.21\n"
+expect = ["Result: DNF"]
+reject = ["New PB", "(+2)"]
+show = "Result: DNF"
+
+[[checks]]
+name = "Exactly 15 is still fine"
+stdin = "15\n10.5\n10.21\n"
+expect = ["Result: 10.50"]
+reject = ["New PB", "(+2)", "Result: DNF"]
+show = "Result: 10.50"
+
+[[checks]]
+name = "Exactly 17 is +2, and still a PB"
+stdin = "17\n8\n10.21\n"
+expect = ["Result: 10.00 (+2)", "New PB!"]
+reject = ["Result: DNF"]
+show = '''
+Result: 10.00 (+2)
+New PB!
+'''

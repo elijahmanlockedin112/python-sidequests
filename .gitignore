@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+progress/*.tmp
+
+# Local copies of CS50 problem-set solutions stay off GitHub.
+# CS50's academic honesty policy asks you not to share them.
+cs50/
+
+.DS_Store
+Thumbs.db

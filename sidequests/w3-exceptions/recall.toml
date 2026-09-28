@@ -1,0 +1,33 @@
+[[prompt]]
+id = "get-int"
+q = "Keep asking the user for an integer until they type a real one, then print it. Write it."
+a = '''
+while True:
+    try:
+        n = int(input("n: "))
+    except ValueError:
+        print("Not an integer")
+    else:
+        break
+print(n)
+'''
+
+[[prompt]]
+id = "else"
+q = "In try / except / else, when does the else block run?"
+a = "Only when the try block finished without raising an exception."
+
+[[prompt]]
+id = "which-error"
+q = "Which exception does each one raise?   int(\"cat\")   [\"a\"][5]   {}[\"x\"]"
+a = "ValueError   IndexError   KeyError"
+
+[[prompt]]
+id = "pass"
+q = "What does pass do inside an except block, and when is that a bad idea?"
+a = "It does nothing, so the error is silently ignored. Bad when it hides a real bug or leaves the user with no feedback."
+
+[[prompt]]
+id = "raise"
+q = "How do you raise your own error, with a message?"
+a = 'raise ValueError("Time must be positive")'

@@ -1,0 +1,97 @@
+title = "1-Up Bank"
+order = 2
+powers = ["int()", "+  and  %", "def ... return", "f-strings"]
+
+story = '''
+In Super Mario Bros., every 100 coins is an extra life. Your bot just cleared
+three worlds of a run. Before the next split, you want the numbers.
+'''
+
+task = '''
+Ask for the coins collected in World 1, World 2 and World 3 (three whole numbers).
+
+Mario starts the run with 3 lives. Every 100 coins adds 1 life.
+
+Print exactly three lines:
+  Total coins: <total>
+  Lives: <3, plus 1 for every 100 coins>
+  Next 1-Up in: <coins still needed to reach the next 100>
+
+Write a function lives_from(coins) that returns how many extra lives a number
+of coins is worth, and use it.
+'''
+
+example = '''
+$ python one_up_bank.py
+World 1 coins: 38
+World 2 coins: 45
+World 3 coins: 71
+Total coins: 154
+Lives: 4
+Next 1-Up in: 46
+'''
+
+hint = "The remainder operator % tells you how far past the last hundred you are. The rest is subtraction."
+
+syntax = '''
+154 // 100   ->  1     (how many whole hundreds)
+154 % 100    ->  54    (what's left over)
+
+def double(n):
+    return n * 2
+'''
+
+pseudocode = '''
+lives_from(coins): return how many whole hundreds fit in coins
+
+main:
+    total <- the three coin counts as ints, added up
+    print the total
+    print 3 + lives_from(total)
+    print 100 minus (total's remainder after dividing by 100)
+'''
+
+extend = [
+  "SMB1's lives counter shows a crown past 9 lives. Print 'Crown!' when lives reach 10 (needs if).",
+  "Ask for all 8 worlds instead of 3.",
+]
+
+[[checks]]
+name = "The example"
+stdin = "38\n45\n71\n"
+expect = ['re:Total coins:\s*154\b', 're:Lives:\s*4\b', 're:Next 1-Up in:\s*46\b']
+show = '''
+Total coins: 154
+Lives: 4
+Next 1-Up in: 46
+'''
+
+[[checks]]
+name = "A coinless run"
+stdin = "0\n0\n0\n"
+expect = ['re:Total coins:\s*0\b', 're:Lives:\s*3\b', 're:Next 1-Up in:\s*100\b']
+show = '''
+Total coins: 0
+Lives: 3
+Next 1-Up in: 100
+'''
+
+[[checks]]
+name = "Several 1-Ups at once"
+stdin = "99\n1\n250\n"
+expect = ['re:Total coins:\s*350\b', 're:Lives:\s*6\b', 're:Next 1-Up in:\s*50\b']
+show = '''
+Total coins: 350
+Lives: 6
+Next 1-Up in: 50
+'''
+
+[[checks]]
+name = "Landing exactly on a hundred"
+stdin = "100\n100\n100\n"
+expect = ['re:Total coins:\s*300\b', 're:Lives:\s*6\b', 're:Next 1-Up in:\s*100\b']
+show = '''
+Total coins: 300
+Lives: 6
+Next 1-Up in: 100
+'''

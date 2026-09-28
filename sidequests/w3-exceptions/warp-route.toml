@@ -1,0 +1,126 @@
+title = "Warp Route"
+order = 3
+powers = ["lists and indexes", "try / except ValueError, IndexError", "raise", "while True + break"]
+
+story = '''
+Your Mario bot beat Super Mario Bros. in 4:41 on the warp route:
+1-1, 1-2, 4-1, 4-2, 8-1, 8-2, 8-3, 8-4. Build a level-select console for that
+route that no button-masher can crash.
+'''
+
+task = '''
+Store the route in a list:
+  ["1-1", "1-2", "4-1", "4-2", "8-1", "8-2", "8-3", "8-4"]
+
+Keep asking "Stage? ". The player types a stage number from 1 to 8:
+  a valid stage        ->  Loading <level>      (stage 1 is 1-1, stage 8 is 8-4)
+  not a number         ->  Not a number
+  a number off the map ->  No stage <number>
+  quit (any caps)      ->  stop asking
+The end of input (EOFError) also stops.
+
+When it stops, print:
+  Stages loaded: <how many loads worked>
+
+Use try / except for the bad cases, including IndexError. Careful: Python lets
+route[-1] quietly work, but stage 0 and negative stages must still say No stage.
+'''
+
+example = '''
+$ python warp_route.py
+Stage? 3
+Loading 4-1
+Stage? nine
+Not a number
+Stage? 9
+No stage 9
+Stage? quit
+Stages loaded: 1
+'''
+
+hint = "Turn the text into an int inside try. Stage n lives at index n - 1. Decide what happens when that index would be negative before Python quietly accepts it."
+
+syntax = '''
+try:
+    n = int(text)
+    item = things[n - 1]
+except ValueError:
+    ...
+except IndexError:
+    ...
+else:
+    ...
+
+raise IndexError        # you can raise an error yourself
+'''
+
+pseudocode = '''
+route <- the 8 levels;  loaded <- 0
+loop:
+    text <- ask Stage?, stripped (end of input -> stop)
+    quit (any case) -> stop
+    try:
+        n <- int(text)
+        n below 1 -> raise IndexError
+        level <- route[n - 1]
+    ValueError -> Not a number
+    IndexError -> No stage n
+    no error   -> Loading level, loaded + 1
+print Stages loaded
+'''
+
+extend = [
+  "Add the Minus World: typing -1 loads it (and only -1).",
+  "Keep a dict of par times per level and print the total par for everything loaded.",
+]
+
+[[checks]]
+name = "First and last stage"
+stdin = "1\n8\nquit\n"
+expect = ["Loading 1-1", "Loading 8-4", 're:Stages loaded:\s*2\b']
+show = '''
+Loading 1-1
+Loading 8-4
+Stages loaded: 2
+'''
+
+[[checks]]
+name = "Words instead of numbers"
+stdin = "three\n3\nquit\n"
+expect = ["Not a number", "Loading 4-1", 're:Stages loaded:\s*1\b']
+show = '''
+Not a number
+Loading 4-1
+Stages loaded: 1
+'''
+
+[[checks]]
+name = "Off the map, including 0 and -1"
+stdin = "9\n0\n-1\nquit\n"
+expect = ["No stage 9", "No stage 0", "No stage -1", 're:Stages loaded:\s*0\b']
+reject = ["Loading"]
+show = '''
+No stage 9
+No stage 0
+No stage -1
+Stages loaded: 0
+'''
+
+[[checks]]
+name = "Shouted QUIT, repeated stage"
+stdin = "5\n5\n  QUIT  \n"
+expect = ["Loading 8-1", "Loading 8-1", 're:Stages loaded:\s*2\b']
+show = '''
+Loading 8-1
+Loading 8-1
+Stages loaded: 2
+'''
+
+[[checks]]
+name = "Input just ends (EOFError)"
+stdin = "2\n"
+expect = ["Loading 1-2", 're:Stages loaded:\s*1\b']
+show = '''
+Loading 1-2
+Stages loaded: 1
+'''

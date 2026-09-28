@@ -1,0 +1,43 @@
+# Retrieval prompts: answer from memory, then self-rate.
+# "Got it" retires a prompt for good. Shaky returns in 3 days, blanked returns next session.
+
+[[prompt]]
+id = "greet"
+q = "Ask the user for their name, then greet them with an f-string. Write both lines."
+a = '''
+name = input("What's your name? ")
+print(f"hello, {name}")
+'''
+
+[[prompt]]
+id = "input-type"
+q = "What type does input() give back? What do you have to do before doing math with it?"
+a = "A str. Convert it first: int(input(...)) or float(input(...))."
+
+[[prompt]]
+id = "def-return"
+q = "Write a function square(n) that returns n squared, and a main() that prints square(7)."
+a = '''
+def main():
+    print(square(7))
+
+def square(n):
+    return n * n
+
+main()
+'''
+
+[[prompt]]
+id = "two-decimals"
+q = "Show two ways to display x = 3.14159 as 3.14."
+a = 'round(x, 2)   and   f"{x:.2f}"'
+
+[[prompt]]
+id = "print-vs-return"
+q = "Inside a function, what is the difference between print(...) and return ...?"
+a = "print shows text on the screen and hands nothing back (the caller gets None). return hands a value back so the caller can use it."
+
+[[prompt]]
+id = "clean-name"
+q = "A user types '  ada LOVELACE  '. Which str methods turn it into 'Ada Lovelace'?"
+a = "name.strip().title()   (.strip() drops the outer spaces, .title() capitalizes each word)"
