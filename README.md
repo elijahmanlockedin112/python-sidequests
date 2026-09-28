@@ -8,7 +8,9 @@ course, and Claude is not the teacher.
 python quest.py
 ```
 
-Python 3.11+. Nothing to install.
+That opens the page at **http://localhost:8950** (same look as Locked In). Leave the
+terminal window open while you use it; Ctrl+C stops it. Python 3.11+, nothing to install.
+The server only listens on your own machine, never your network.
 
 ## The loop
 
@@ -43,12 +45,13 @@ Python 3.11+. Nothing to install.
 
 ## Learning mode and maintenance mode
 
-`python quest.py` is **learning mode**, the default. It has no settings, themes, or
-editors, on purpose.
+`python quest.py` is **learning mode**, the default: the localhost page. It has no
+settings, themes, or editors, on purpose.
 
-`python quest.py maintenance` is **maintenance mode**: set your CS50P week, restart
-a sidequest, undo a mistaken entry, or validate the sidequest files. It makes you
-type `maintain` to get in, and it counts your visits. Nothing in there is learning.
+`python quest.py maintenance` is **maintenance mode**, and it stays in the terminal
+on purpose: set your CS50P week, restart a sidequest, undo a mistaken entry, or
+validate the sidequest files. It makes you type `maintain` to get in, and it counts
+your visits. Nothing in there is learning.
 
 **Feature freeze.** The app is done. Don't build features for it during study time.
 The one planned bit of maintenance is adding sidequests for Week 4 onward once you
@@ -59,6 +62,9 @@ get there, at most three per week.
 ```
 quest.py          run this
 app/              the companion itself (editing it never counts as a session)
+  core.py           the learning loop
+  server.py         serves it on localhost (127.0.0.1 only)
+  web/index.html    the page
 sidequests/       original challenges + recall questions, per CS50P week (TOML)
 my-code/          your sidequest solutions, one folder per CS50P week
 experiments/      scratch: type along with lectures, try ideas
@@ -68,9 +74,9 @@ progress/         progress.json (state) and LOG.md (every piece of Python you wr
 
 ## AI help (optional)
 
-The app never calls an AI. When a ladder rung or an extra challenge needs Claude,
-it copies a prompt to your clipboard that tells Claude **not** to write your
-solution. You paste it into Claude yourself.
+The app never calls an AI. When a ladder rung, a review, or an extra challenge
+needs Claude, the page copies a prompt to your clipboard that tells Claude **not**
+to write your solution. You paste it into Claude yourself.
 
 ## CS50 honesty
 

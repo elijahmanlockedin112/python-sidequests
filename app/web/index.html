@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Python Sidequests</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;1,8..60,400&display=swap">
+<style>
+/* Locked In's visual system (tokens copied from locked-in/shared/ui.css), plus a few pieces this page needs. */
+:root{
+  --ground:#EEF0F4; --surface:#FFFFFF; --surface-2:#F6F7FA;
+  --line:#DCE0E8; --line-strong:#C3C9D4;
+  --ink:#161922; --ink-2:#4B5261; --ink-3:#787F8E;
+  --accent:#D89A1E; --accent-ink:#855A00; --accent-soft:#FAEFD8; --accent-edge:#E6BE6B;
+  --good:#2C7A4E; --good-soft:#E2F2E8;
+  --warn:#AE5E27; --warn-soft:#FBEBDE;
+  --crit:#AB3434; --crit-soft:#FAE4E4;
+  --shadow:0 1px 2px rgba(22,25,34,.06), 0 6px 18px -12px rgba(22,25,34,.25);
+  --radius:10px;
+  --f-display:"Archivo",-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+  --f-note:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#13151C; --surface:#1B1E27; --surface-2:#22262F;
+    --line:#2C313D; --line-strong:#3D4351;
+    --ink:#E9EBF0; --ink-2:#A6ADBC; --ink-3:#777E8D;
+    --accent:#E9B44C; --accent-ink:#EFC067; --accent-soft:#332810; --accent-edge:#6B551F;
+    --good:#5FBF8A; --good-soft:#15291F;
+    --warn:#E08A52; --warn-soft:#2E1F14;
+    --crit:#EF7070; --crit-soft:#2E1616;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -14px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#13151C; --surface:#1B1E27; --surface-2:#22262F;
+  --line:#2C313D; --line-strong:#3D4351;
+  --ink:#E9EBF0; --ink-2:#A6ADBC; --ink-3:#777E8D;
+  --accent:#E9B44C; --accent-ink:#EFC067; --accent-soft:#332810; --accent-edge:#6B551F;
+  --good:#5FBF8A; --good-soft:#15291F;
+  --warn:#E08A52; --warn-soft:#2E1F14;
+  --crit:#EF7070; --crit-soft:#2E1616;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -14px rgba(0,0,0,.8);
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:var(--f-display); font-size:15px; line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh; min-height:100dvh; display:flex; flex-direction:column;
+}
+[hidden]{display:none !important}
+code,.mono{font-family:var(--f-mono);font-size:.92em}
+.dim{color:var(--ink-3)}
+.spacer{flex:1 1 auto}
+
+/* top bar */
+.nowbar{position:fixed;top:0;left:0;right:0;z-index:10;padding:12px 18px;display:flex;gap:10px;align-items:center;background:var(--ground)}
+.brand{font-weight:800;letter-spacing:-.025em;font-size:14px;display:flex;align-items:center;gap:8px}
+.brand .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);flex:none;animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@media (prefers-reduced-motion:reduce){.brand .dot{animation:none}}
+.chip{font-family:var(--f-mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:999px;border:1px solid var(--line-strong);color:var(--ink-3);white-space:nowrap}
+.chip.warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 40%,transparent);background:var(--warn-soft);text-transform:none}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips .chip{text-transform:none;letter-spacing:0;font-size:12px;color:var(--ink-2)}
+
+/* buttons (links styled as buttons too) */
+button,.btn{
+  font-family:var(--f-display);font-size:13px;font-weight:600;line-height:1.3;
+  padding:6px 12px;border-radius:7px;border:1px solid var(--line-strong);
+  background:var(--surface);color:var(--ink);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;
+  transition:background .12s ease,border-color .12s ease,transform .06s ease;
+}
+button:hover,.btn:hover{background:var(--surface-2);border-color:var(--ink-3)}
+button:active,.btn:active{transform:translateY(1px)}
+button:focus-visible,.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button[disabled]{opacity:.45;cursor:progress}
+.go{background:var(--accent);border-color:var(--accent);color:#1B1405;font-weight:700}
+.go:hover{background:var(--accent-edge);border-color:var(--accent-edge)}
+.fin{background:var(--good);border-color:var(--good);color:#fff}
+.fin:hover{background:var(--good);filter:brightness(1.08)}
+.ghost{background:transparent;border-color:var(--line)}
+.sm{font-size:12px;padding:4px 9px}
+.nowbtn{padding:13px 24px;font-size:16px}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:16px}
+
+/* the one screen */
+.nowpage{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;max-width:680px;margin:0 auto;width:100%;padding:72px 24px 48px}
+.nowpage.top{justify-content:flex-start;padding-top:84px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--accent-ink);margin:0 0 14px}
+.eyebrow.good{color:var(--good)}
+.nowtask{font-size:clamp(34px,7vw,56px);font-weight:800;letter-spacing:-.04em;line-height:1.05;margin:0;text-wrap:balance}
+.nowsub{font-size:clamp(22px,4vw,28px);font-weight:800;letter-spacing:-.03em;line-height:1.15;margin:0 0 6px}
+.question{font-size:clamp(22px,4vw,30px);font-weight:700;letter-spacing:-.025em;line-height:1.25;margin:0;white-space:pre-wrap;text-wrap:balance}
+.nowdur{font-family:var(--f-mono);font-size:clamp(14px,2.4vw,17px);font-weight:500;color:var(--accent-ink);margin:12px 0 0;font-variant-numeric:tabular-nums}
+.nowwhy{font-family:var(--f-note);font-size:16px;line-height:1.55;color:var(--ink-3);margin:14px 0 0;max-width:52ch}
+.nowwhy.good{color:var(--good)}
+.nowwhy.warn,.warn{color:var(--warn)}
+.nowwhy.bad{color:var(--crit)}
+.story{font-family:var(--f-note);font-size:17px;line-height:1.6;color:var(--ink-2);margin:14px 0 0;max-width:60ch}
+.after{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin:18px 0 -8px}
+.nowthen{margin-top:38px;border-top:1px solid var(--line);padding-top:20px}
+.lbl{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin:22px 0 6px}
+.nowthen .lbl:first-child{margin-top:0}
+.lbl.acc{color:var(--accent-ink)}
+.val{font-size:19px;font-weight:700;letter-spacing:-.02em;margin:0;color:var(--ink-2)}
+.val .mono{display:block;font-size:13px;font-weight:500;color:var(--ink-3);margin-top:4px;letter-spacing:0}
+.small{font-size:13px;color:var(--ink-3);margin:12px 0 0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.mystery{font-family:var(--f-mono);font-size:clamp(36px,7vw,52px);font-weight:600;letter-spacing:.3em;color:var(--accent-ink);margin:4px 0 0}
+
+/* footer: the journey */
+.nowfoot{margin-top:40px;display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:20px}
+.nowleft{font-family:var(--f-mono);font-size:clamp(22px,4vw,30px);font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.nowleft small{display:block;font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-top:3px}
+.nowleft.sm{font-size:18px;text-align:right}
+.blocks{display:flex;gap:3px;padding-bottom:9px}
+.blocks i{width:14px;height:10px;border-radius:2px;background:var(--line)}
+.blocks i.on{background:var(--accent)}
+.today{font-family:var(--f-mono);font-size:12px;color:var(--good);margin:10px 0 0}
+
+/* pieces */
+pre.code{font-family:var(--f-mono);font-size:13px;line-height:1.55;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;margin:0;white-space:pre-wrap;overflow-wrap:anywhere;box-shadow:var(--shadow)}
+pre.fail{border-left:3px solid var(--crit);margin-top:18px}
+.opts{display:flex;flex-direction:column;gap:8px;margin-top:18px}
+.opt{display:flex;gap:12px;align-items:center;padding:13px 14px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);cursor:pointer;font-size:16px;font-weight:600}
+.opt:hover{border-color:var(--line-strong)}
+.opt input{width:18px;height:18px;accent-color:var(--accent);flex:none;margin:0}
+.opt:has(input:checked){border-color:var(--accent-edge);background:var(--accent-soft)}
+.opt .mono{font-weight:500}
+label.fld{display:block;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);margin:18px 0 5px}
+input[type=text]{font-family:var(--f-display);font-size:16px;color:var(--ink);background:var(--surface-2);border:1px solid var(--line-strong);border-radius:7px;padding:9px 10px;width:100%}
+input[type=text]:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.results,.ladder,.ideas{list-style:none;padding:0;margin:16px 0 0;display:flex;flex-direction:column;gap:6px}
+.results li,.ladder li{display:flex;gap:10px;align-items:baseline;font-size:15px;font-weight:600}
+.mk{font-family:var(--f-mono);width:1.2em;flex:none;text-align:center}
+.results .ok .mk,.ladder .done .mk{color:var(--good)}
+.results .bad .mk{color:var(--crit)}
+.ladder .n{font-family:var(--f-mono);font-size:12px;color:var(--ink-3);width:1.6em;text-align:right;flex:none}
+.ladder .here{color:var(--accent-ink)}
+.ladder .here .mk{color:var(--accent-ink)}
+.ladder .later{color:var(--ink-3);font-weight:500}
+.ideas li{font-family:var(--f-note);font-size:16px;color:var(--ink-2);padding-left:16px;position:relative}
+.ideas li::before{content:"·";position:absolute;left:4px;color:var(--accent)}
+details{margin-top:14px}
+summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--ink-2);margin-bottom:8px}
+.weeks{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:22px}
+.weeks button{justify-content:flex-start;text-align:left;padding:12px 14px;font-size:14px}
+.mid{padding:10px 18px;font-size:15px}
+table.prog{border-collapse:collapse;width:100%;margin-top:18px;font-size:14px}
+.prog th{font-family:var(--f-mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);text-align:center;padding:0 6px 8px}
+.prog td{padding:7px 6px;border-top:1px solid var(--line);text-align:center}
+.prog td:nth-child(3){text-align:left;font-weight:600;width:100%}
+.prog td:nth-child(1),.prog td:nth-child(2){text-align:left;white-space:nowrap;color:var(--ink-3)}
+.prog tr.here td{color:var(--accent-ink)}
+.prog tr.todo td:nth-child(3){color:var(--ink-3);font-weight:500}
+.ok{color:var(--good)} .acc{color:var(--accent-ink)}
+dl.stats{margin:22px 0 0;display:flex;flex-direction:column;gap:10px}
+dl.stats div{display:flex;gap:14px;flex-wrap:wrap;align-items:baseline}
+dl.stats dt{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);width:150px;flex:none}
+dl.stats dd{margin:0;font-weight:600}
+dl.stats .dim{font-weight:400;font-size:13px}
+@media (max-width:560px){.prog th:nth-child(4),.prog td:nth-child(4),.prog th:nth-child(5),.prog td:nth-child(5){display:none}}
+
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);max-width:min(560px,calc(100% - 32px));z-index:20;
+  background:var(--surface);border:1px solid var(--line-strong);border-left:3px solid var(--good);border-radius:var(--radius);
+  padding:11px 14px;box-shadow:var(--shadow);font-size:14px;font-weight:600;cursor:pointer}
+.toast.warn{border-left-color:var(--warn)}
+.toast.crit{border-left-color:var(--crit)}
+</style>
+</head>
+<body>
+
+<div class="nowbar">
+  <div class="brand"><span class="dot"></span>Python Sidequests</div>
+  <span class="spacer"></span>
+  <span class="chip warn" id="budget" hidden></span>
+  <button class="sm ghost" id="homeBtn" hidden>Home</button>
+  <button class="sm ghost" id="progressBtn">Progress</button>
+</div>
+
+<main class="nowpage" id="view" aria-live="polite"></main>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script type="module">
+const view = document.getElementById("view");
+const toastEl = document.getElementById("toast");
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+class Refused extends Error {}
+
+let toastTimer;
+function toast(msg, kind = "ok", ms = 6000) {
+  toastEl.textContent = msg;
+  toastEl.className = `toast ${kind}`;
+  toastEl.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { toastEl.hidden = true; }, ms);
+}
+toastEl.addEventListener("click", () => { toastEl.hidden = true; });
+
+// Every call returns `data`; `api.notes` holds the server's short messages ("Coding session 3 / 40 logged.").
+async function api(path, body, {quiet = false} = {}) {
+  const init = body === undefined ? {} : {
+    method: "POST",
+    headers: {"Content-Type": "application/json", "X-Sidequests": "1"},
+    body: JSON.stringify(body),
+  };
+  let res, json;
+  try {
+    res = await fetch(path, init);
+    json = await res.json();
+  } catch {
+    toast("Can't reach the server. Is python quest.py still running?", "crit", 12000);
+    throw new Error("offline");
+  }
+  api.notes = json.notes || [];
+  if (res.status === 409) { toast(json.refused, "warn", 9000); throw new Refused(json.refused); }
+  if (!res.ok) { toast(json.error || `Something broke (${res.status}).`, "crit", 9000); throw new Error(json.error); }
+  if (!quiet && api.notes.length) toast(api.notes.join("  "));
+  return json.data;
+}
+
+function show(html, {top = false, nav = true} = {}) {
+  view.className = "nowpage" + (top ? " top" : "");
+  view.innerHTML = html;
+  document.getElementById("homeBtn").hidden = !nav;
+  window.scrollTo(0, 0);
+  view.querySelector("[data-focus]")?.focus();
+}
+
+// Click handlers: no double-submits, and refusals were already shown as a toast.
+function wire(el, fn) {
+  el.addEventListener("click", async e => {
+    if (el.disabled) return;
+    el.disabled = true;
+    try { await fn(e); }
+    catch (err) { if (!(err instanceof Refused) && err.message !== "offline") console.error(err); }
+    finally { if (el.isConnected) el.disabled = false; }
+  });
+}
+const on = (id, fn) => { const el = document.getElementById(id); if (el) wire(el, fn); };
+
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); return true; } catch { return false; }
+}
+
+// ── home ────────────────────────────────────────────────────────────────
+async function home() {
+  const h = await api("/api/home");
+  const budget = document.getElementById("budget");
+  budget.hidden = !h.over_budget;
+  budget.textContent = `${h.app_minutes} min here today. Close it and code.`;
+  if (!h.onboarded) return onboard(h);
+  const u = h.unit, st = h.status;
+  const done = [st.lecture && "lecture ✓", st.examples && "examples ✓",
+                st.pset !== "not started" && `problem set ${st.pset}`].filter(Boolean);
+  const status = [u.label, ...(done.length ? done : ["nothing logged yet"])].join(" · ");
+  const mainQuest = h.course_done
+    ? `<p class="nowwhy good">✓ Today's course work is logged.</p>
+       <div class="btnrow"><a class="btn ghost" href="${esc(u.url)}" target="_blank" rel="noopener">Open CS50P ↗</a></div>`
+    : `<p class="nowwhy">The course teaches. Most of your time goes there.</p>
+       <div class="btnrow"><a class="btn go nowbtn" href="${esc(u.url)}" target="_blank" rel="noopener" data-focus>Open CS50P ↗</a></div>
+       <p class="after">Afterward</p>
+       <div class="btnrow"><button id="finished">I finished today's course work</button></div>`;
+  show(`
+    <p class="eyebrow">Main quest</p>
+    <h1 class="nowtask">Continue CS50P: ${esc(u.title)}</h1>
+    <p class="nowdur">${esc(status)}</p>
+    ${mainQuest}
+    <section class="nowthen">${sidequestHTML(h.sidequest)}</section>
+    ${journeyHTML(h.journey)}`, {nav: false});
+  on("finished", () => record(h));
+  on("startRecall", recall);
+  on("reveal", async () => brief(await api("/api/reveal", {})));
+  on("check", check);
+  on("briefBtn", async () => brief(await api("/api/brief")));
+  on("stuck", ladder);
+  on("skip", () => own(true));
+  on("logCode", () => own(false));
+  on("extra", async () => promptView("Extra challenge", (await api("/api/prompt", {kind: "extra"})).prompt,
+    "Write your code in my-code/, then come back and log it with “I built something real”."));
+}
+
+function sidequestHTML(sq) {
+  const skip = `<button class="ghost sm" id="skip">Skip it: I built something real</button>`;
+  switch (sq.state) {
+    case "locked":
+      return `<p class="lbl">Sidequest</p><p class="val">🔒 Complete today's CS50 work first.</p>` +
+        (sq.evidence ? `<p class="small">You wrote Python today. <button class="sm ghost" id="logCode">Log it as a coding session</button></p>` : "");
+    case "recall":
+      return `<p class="lbl">Sidequest</p><p class="val">Unlocks after a 2–5 minute retrieval check.</p>
+        <div class="btnrow"><button class="go nowbtn" id="startRecall">Start the check</button></div>`;
+    case "unlocked":
+      return `<p class="lbl acc">Sidequest unlocked</p><p class="mystery">????</p>
+        <div class="btnrow"><button class="go nowbtn" id="reveal">Reveal</button>${skip}</div>`;
+    case "active":
+      return `<p class="lbl">Sidequest</p><p class="val">${esc(sq.title)}<span class="mono">${esc(sq.file)}</span></p>
+        <div class="btnrow"><button class="go nowbtn" id="check">Check it</button>
+        <button class="ghost" id="briefBtn">The brief</button><button class="ghost" id="stuck">I'm stuck</button>
+        ${sq.can_skip ? skip : ""}</div>`;
+    case "done":
+      return `<p class="lbl">Sidequest</p><p class="val">✓ Done today: ${esc(sq.title)}</p>
+        <p class="nowwhy">That's the session. Close this and come back next time.</p>`;
+    default:  // empty: no premade sidequest for this week
+      return `<p class="lbl">Sidequest</p><p class="val">No premade sidequest for ${esc(sq.unit)}. Real code beats practice.</p>
+        <div class="btnrow"><button class="go" id="skip">I built something real</button>
+        <button class="ghost sm" id="extra">Copy an extra-challenge prompt for Claude</button></div>`;
+  }
+}
+
+function journeyHTML(j) {
+  const filled = Math.round(12 * Math.min(j.sessions, j.total) / j.total);
+  const blocks = Array.from({length: 12}, (_, i) => `<i class="${i < filled ? "on" : ""}"></i>`).join("");
+  return `<footer class="nowfoot">
+      <div class="nowleft">${j.sessions} / ${j.total}<small>${j.total}-session journey</small></div>
+      <div class="blocks" aria-hidden="true">${blocks}</div>
+      <span class="spacer"></span>
+      <div class="nowleft sm">${j.week} / ${j.target}<small>this week</small></div>
+    </footer>
+    ${j.today ? `<p class="today">✓ Coding session logged today</p>` : ""}`;
+}
+
+function onboard(h) {
+  show(`<p class="eyebrow">Python Sidequests</p>
+    <h1 class="nowtask">Which CS50P week are you on?</h1>
+    <p class="nowwhy">A companion to Harvard's CS50P. The course teaches. This sends you back to it,
+      checks what you remember, then hands you something to build with it.</p>
+    <div class="weeks">${h.weeks.map((w, i) => `<button data-week="${i}">${esc(w)}</button>`).join("")}</div>`, {nav: false});
+  view.querySelectorAll("[data-week]").forEach(b =>
+    wire(b, async () => { await api("/api/onboard", {week: Number(b.dataset.week)}); await home(); }));
+}
+
+// ── 2. record what you did ─────────────────────────────────────────────
+function record(h) {
+  show(`<p class="eyebrow">What did you do in CS50P today?</p>
+    <h2 class="nowsub">${esc(h.unit.label)} · ${esc(h.unit.title)}</h2>
+    <div class="opts">${h.course_options.map((t, i) =>
+      `<label class="opt"><input type="checkbox" value="${i + 1}"><span>${esc(t)}</span></label>`).join("")}</div>
+    <div class="btnrow"><button class="go nowbtn" id="save">Save</button><button class="ghost" id="cancel">Cancel</button></div>`);
+  on("save", async () => {
+    const picked = [...view.querySelectorAll(".opt input:checked")].map(x => Number(x.value));
+    await api("/api/course", {picked});
+    await recall();
+  });
+  on("cancel", home);
+}
+
+// ── 3. retrieval check ─────────────────────────────────────────────────
+async function recall() {
+  const prompts = await api("/api/recall", {});
+  const todo = prompts.filter(p => !p.rated);
+  if (!todo.length) return home();
+  ask(todo, 0, prompts.length - todo.length, prompts.length);
+}
+
+function ask(todo, i, offset, total) {
+  const p = todo[i];
+  show(`<p class="eyebrow">Retrieval check · ${offset + i + 1} of ${total} · ${esc(p.unit)}</p>
+    <h2 class="question">${esc(p.q)}</h2>
+    <p class="nowwhy">No looking anything up. Answer in your head, on paper, or in a Python REPL.</p>
+    <div class="btnrow"><button class="go nowbtn" id="showA" data-focus>Show a good answer</button></div>
+    <div id="answer" hidden>
+      <p class="lbl">A good answer</p><pre class="code">${esc(p.a)}</pre>
+      <p class="lbl">Did you get it?</p>
+      <div class="btnrow"><button class="fin mid" data-r="g">Got it</button><button class="mid" data-r="s">Shaky</button><button class="mid" data-r="b">Blanked</button></div>
+    </div>`);
+  on("showA", () => { document.getElementById("answer").hidden = false; document.getElementById("showA").remove(); });
+  view.querySelectorAll("[data-r]").forEach(b => wire(b, async () => {
+    await api("/api/rate", {key: p.key, rating: b.dataset.r});
+    if (i + 1 < todo.length) return ask(todo, i + 1, offset, total);
+    toast("Sidequest unlocked.");
+    await home();
+  }));
+}
+
+// ── 4. sidequest ───────────────────────────────────────────────────────
+function brief(b) {
+  const powers = b.powers
+    ? `<p class="lbl">Powers you'll use</p><div class="chips">${b.powers.map(x => `<span class="chip">${esc(x)}</span>`).join("")}</div>`
+    : `<p class="nowwhy">Powers: you decide which ones you need.</p>`;
+  show(`<p class="eyebrow">Sidequest · ${esc(b.unit)} · scaffolding: ${esc(b.scaffold)}</p>
+    <h1 class="nowtask">${esc(b.title)}</h1>
+    <p class="story">${esc(b.story)}</p>
+    <p class="lbl">The task</p><pre class="code">${esc(b.task)}</pre>
+    <p class="lbl">Example</p><pre class="code">${esc(b.example)}</pre>
+    ${powers}
+    <p class="lbl">Your file</p><p class="mono">${esc(b.file)}</p>
+    <p class="nowwhy">Run it yourself first: <code>cd ${esc(b.folder)}</code> then <code>python ${esc(b.name)}</code>. Then check it here.</p>
+    <div class="btnrow">
+      ${b.editor ? `<button id="editor">Open in VS Code</button>` : ""}
+      <button class="go nowbtn" id="check">Check it</button>
+      <button class="ghost" id="stuck">I'm stuck</button>
+    </div>`, {top: true});
+  on("editor", async () => { await api("/api/editor", {}); toast("Opened in VS Code."); });
+  on("check", check);
+  on("stuck", ladder);
+}
+
+async function check() {
+  const r = await api("/api/check", {}, {quiet: true});
+  if (r.complete) return complete(r.complete, api.notes);
+  show(`<p class="eyebrow">Checking your sidequest</p>
+    <h2 class="nowsub">${r.passed} of ${r.results.length} pass</h2>
+    <ul class="results">${r.results.map((x, i) =>
+      `<li class="${x.ok ? "ok" : "bad"}"><span class="mk">${x.ok ? "✓" : "✗"}</span>${i + 1}. ${esc(x.name)}</li>`).join("")}</ul>
+    <pre class="code fail">${esc(r.failure)}</pre>
+    <p class="nowwhy">Read your output, change one thing, run it, check again.</p>
+    <div class="btnrow"><button class="go nowbtn" id="again" data-focus>Check again</button>
+      <button class="ghost" id="stuck">I'm stuck</button><button class="ghost" id="briefBtn">The brief</button></div>`, {top: true});
+  on("again", check);
+  on("stuck", ladder);
+  on("briefBtn", async () => brief(await api("/api/brief")));
+}
+
+function complete(c, notes) {
+  show(`<p class="eyebrow good">All checks pass</p>
+    <h1 class="nowtask">${esc(c.title)} complete.</h1>
+    ${notes.map(n => `<p class="nowdur">${esc(n)}</p>`).join("")}
+    ${c.extend.length ? `<p class="lbl">If you want more · optional, not required</p>
+      <ul class="ideas">${c.extend.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
+    <div id="commit"></div>
+    <div class="btnrow"><button class="go" id="done">Done</button>
+      <button class="ghost" id="review">Copy a review prompt for Claude</button></div>`, {top: true});
+  commitBlock(c.commit);
+  on("review", async () => promptView("Review", (await api("/api/prompt", {kind: "review"})).prompt, ""));
+  on("done", home);
+}
+
+// ── 5. commit ──────────────────────────────────────────────────────────
+function commitBlock(preview) {
+  const box = document.getElementById("commit");
+  if (!preview) return;
+  box.innerHTML = `<p class="lbl">Commit</p><pre class="code">${esc(preview.commands.join("\n"))}</pre>
+    <div class="btnrow" id="commitBtns"><button class="go" id="runCommit">Run it</button><button class="ghost" id="skipCommit">Skip</button></div>
+    <p class="nowwhy" id="commitOut" hidden></p>`;
+  const finish = (text, cls) => {
+    document.getElementById("commitBtns").remove();
+    const out = document.getElementById("commitOut");
+    out.hidden = false;
+    out.textContent = text;
+    out.className = `nowwhy ${cls}`;
+  };
+  on("runCommit", async () => { const r = await api("/api/commit", {}); finish(r.output, r.ok ? "good" : "bad"); });
+  on("skipCommit", async () => { await api("/api/skip-commit", {}); finish("Skipped. Run those yourself when you're ready.", ""); });
+}
+
+// ── stuck: one rung at a time ──────────────────────────────────────────
+async function ladder() {
+  const l = await api("/api/ladder");
+  show(`<p class="eyebrow">Stuck? One rung at a time.</p>
+    <ol class="ladder">${l.rungs.map(r => `<li class="${r.done ? "done" : r.here ? "here" : "later"}">
+      <span class="mk">${r.done ? "✓" : r.here ? "→" : ""}</span><span class="n">${r.n}</span>${esc(r.label)}</li>`).join("")}</ol>
+    ${l.blocked ? `<p class="nowwhy warn">${esc(l.blocked)}</p>` : ""}
+    <div class="btnrow">
+      ${l.next ? `<button class="go nowbtn" id="take" data-focus>Take rung ${l.next}: ${esc(l.next_label)}</button>` : ""}
+      <button class="ghost" id="back">Back to the sidequest</button></div>`, {top: true});
+  on("take", async () => {
+    const r = await api("/api/rung", {n: l.next});
+    if (r.prompt) return promptView(r.label, r.prompt, "", true);
+    show(`<p class="eyebrow">Rung ${l.next}</p><h2 class="nowsub">${esc(r.label)}</h2>
+      <pre class="code">${esc(r.text)}</pre><p class="nowwhy">Now go try it.</p>
+      <div class="btnrow"><button class="go" id="back">Back to the sidequest</button></div>`, {top: true});
+    on("back", async () => brief(await api("/api/brief")));
+  });
+  on("back", async () => brief(await api("/api/brief")));
+}
+
+// A copy-and-paste prompt for Claude. Nothing in this app talks to an AI.
+async function promptView(label, text, note, toSidequest = false) {
+  const copied = await copyText(text);
+  show(`<p class="eyebrow">Claude · ${esc(label)}</p>
+    <h2 class="nowsub">${copied ? "Prompt copied. Paste it into Claude." : "Copy this prompt into Claude."}</h2>
+    <p class="nowwhy">It asks Claude not to write your solution. Keep it that way.${note ? " " + esc(note) : ""}</p>
+    ${copied ? `<details><summary>Show the prompt</summary><pre class="code">${esc(text)}</pre></details>`
+             : `<pre class="code" style="white-space:pre-wrap">${esc(text)}</pre>`}
+    <div class="btnrow"><button class="go" id="back">${toSidequest ? "Back to the sidequest" : "Done"}</button></div>`, {top: true});
+  on("back", async () => toSidequest ? brief(await api("/api/brief")) : home());
+}
+
+// ── real code outranks practice ────────────────────────────────────────
+async function own(real) {
+  const {files} = await api("/api/evidence");
+  const head = `<p class="eyebrow">${real ? "Skip sidequest: I built something real" : "Log Python I wrote today"}</p>`;
+  if (!files.length) {
+    show(`${head}<h1 class="nowtask">Planning to code is not coding.</h1>
+      <p class="nowwhy">No Python file in <code>my-code/</code>, <code>experiments/</code> or <code>projects/</code>
+        changed today. Save what you wrote under <code>projects/</code> (or <code>experiments/</code>), then come back.</p>
+      <div class="btnrow"><button class="ghost" id="back">Back</button></div>`);
+    return on("back", home);
+  }
+  show(`${head}<h2 class="nowsub">What did you write?</h2>
+    <div class="opts">${files.map(f =>
+      `<label class="opt"><input type="checkbox" value="${esc(f)}" checked><span class="mono">${esc(f)}</span></label>`).join("")}</div>
+    <label class="fld" for="what">What is it, in one line?</label><input type="text" id="what" maxlength="120" data-focus>
+    <div class="btnrow" id="ownBtns"><button class="go nowbtn" id="log">Log it</button><button class="ghost" id="back">Cancel</button></div>
+    <div id="commit"></div>`);
+  on("log", async () => {
+    const chosen = [...view.querySelectorAll(".opt input:checked")].map(x => x.value);
+    const r = await api("/api/own", {real, files: chosen, what: document.getElementById("what").value});
+    document.getElementById("ownBtns").innerHTML = `<button class="go" id="done">Done</button>`;
+    on("done", home);
+    commitBlock(r.commit);
+  });
+  on("back", home);
+}
+
+// ── progress ───────────────────────────────────────────────────────────
+async function progress() {
+  const p = await api("/api/progress");
+  const tick = v => v ? `<span class="ok">✓</span>` : `<span class="dim">·</span>`;
+  const pset = v => v === "done" ? tick(true) : v === "started" ? `<span class="acc">…</span>` : tick(false);
+  const mark = {done: "[✓]", here: "[&gt;]", todo: "[ ]"};
+  show(`<p class="eyebrow">Progress</p><h1 class="nowtask">CS50P</h1>
+    <table class="prog">
+      <thead><tr><th></th><th></th><th></th><th>lec</th><th>ex</th><th>pset</th><th>side</th><th>mastery</th></tr></thead>
+      <tbody>${p.rows.map(r => `<tr class="${r.mark}"><td class="mono">${mark[r.mark]}</td><td class="mono">${esc(r.label)}</td>
+        <td>${esc(r.title)}</td><td>${tick(r.lecture)}</td><td>${tick(r.examples)}</td><td>${pset(r.pset)}</td>
+        <td>${tick(r.sidequest)}</td><td>${tick(r.mastery)}</td></tr>`).join("")}</tbody>
+    </table>
+    <dl class="stats">
+      <div><dt>Coding sessions</dt><dd>${p.sessions} / ${p.total} <span class="dim">this week ${p.week} / ${p.target}</span></dd></div>
+      <div><dt>Sidequests</dt><dd>${p.sidequests} done, ${p.clean} with no hints</dd></div>
+      <div><dt>Real builds</dt><dd>${p.builds}</dd></div>
+      <div><dt>Scaffolding</dt><dd>${esc(p.scaffold)} <span class="dim">less help as you solve without hints</span></dd></div>
+      <div><dt>Time in this app</dt><dd>${p.app_minutes_total} min total, ${p.app_minutes_today} today <span class="dim">budget: 5–10% of your Python time</span></dd></div>
+      ${p.maintenance ? `<div><dt>Maintenance</dt><dd>${p.maintenance} visits <span class="dim">not learning</span></dd></div>` : ""}
+    </dl>
+    <p class="nowwhy">The full record of what you wrote is <code>progress/LOG.md</code>.</p>
+    <div class="btnrow"><button class="ghost" id="back">Back</button></div>`, {top: true});
+  on("back", home);
+}
+
+// ── this page times itself: only while it's visible, focused and being used ──
+let lastActive = Date.now();
+for (const ev of ["pointerdown", "pointermove", "keydown", "wheel"]) {
+  addEventListener(ev, () => { lastActive = Date.now(); }, {passive: true});
+}
+setInterval(() => {
+  if (document.visibilityState === "visible" && document.hasFocus() && Date.now() - lastActive < 90_000) {
+    api("/api/tick", {seconds: 30}, {quiet: true}).catch(() => {});
+  }
+}, 30_000);
+
+wire(document.getElementById("homeBtn"), home);
+wire(document.getElementById("progressBtn"), progress);
+home().catch(() => {});
+</script>
+</body>
+</html>

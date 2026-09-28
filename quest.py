@@ -1,7 +1,7 @@
 """Python Sidequests, the CS50P companion.
 
-    python quest.py               learning mode (the default, and the point)
-    python quest.py maintenance   maintenance mode (not learning; nothing counts)
+    python quest.py               learning mode: opens the page at http://localhost:8950
+    python quest.py maintenance   maintenance mode, in the terminal (not learning; nothing counts)
 """
 import sys
 

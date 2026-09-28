@@ -1,12 +1,9 @@
 """Optional help from Claude. An emergency tool, never the engine.
 
-Nothing here calls an API. It builds a guarded prompt and copies it to the
-clipboard; you paste it into Claude yourself. No per-token bill, no latency
-inside the app, and the app works exactly the same if you never use it.
+Nothing here calls an API. It builds a guarded prompt; the page copies it to
+your clipboard and you paste it into Claude yourself. No per-token bill, no
+latency inside the app, and the app works exactly the same if you never use it.
 """
-import shutil
-import subprocess
-import sys
 
 THEMES = "speedcubing, Super Mario Bros. speedruns, Quiz Bowl, AI competitions, or running a small software company"
 
@@ -69,21 +66,3 @@ def extra_prompt(unit, covered):
         "one example run, and 3 test inputs with their exact expected output.\n"
         "- No solution, no hints, no starter code.",
     ])
-
-
-def copy(text):
-    """Put text on the clipboard. Returns False if no clipboard tool is available."""
-    try:
-        if sys.platform == "win32":
-            subprocess.run(["clip"], input=text.encode("utf-16-le"), check=True)
-        elif sys.platform == "darwin":
-            subprocess.run(["pbcopy"], input=text.encode("utf-8"), check=True)
-        elif shutil.which("wl-copy"):
-            subprocess.run(["wl-copy"], input=text.encode("utf-8"), check=True)
-        elif shutil.which("xclip"):
-            subprocess.run(["xclip", "-selection", "clipboard"], input=text.encode("utf-8"), check=True)
-        else:
-            return False
-        return True
-    except (OSError, subprocess.CalledProcessError):
-        return False
