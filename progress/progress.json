@@ -1,12 +1,159 @@
 {
-  "onboarded": false,
-  "units": {},
-  "sidequests": {},
-  "recall": {},
-  "sessions": {},
+  "onboarded": true,
+  "units": {
+    "functions-variables": {
+      "lecture": true,
+      "examples": true,
+      "pset_attempted": true,
+      "pset_done": true,
+      "sidequest": true,
+      "mastery": false
+    },
+    "conditionals": {
+      "lecture": false,
+      "examples": false,
+      "pset_attempted": false,
+      "pset_done": false,
+      "sidequest": false,
+      "mastery": false
+    },
+    "loops": {
+      "lecture": false,
+      "examples": false,
+      "pset_attempted": false,
+      "pset_done": false,
+      "sidequest": false,
+      "mastery": false
+    },
+    "exceptions": {
+      "lecture": false,
+      "examples": false,
+      "pset_attempted": false,
+      "pset_done": false,
+      "sidequest": false,
+      "mastery": false
+    },
+    "libraries": {
+      "lecture": false,
+      "examples": false,
+      "pset_attempted": false,
+      "pset_done": false,
+      "sidequest": false,
+      "mastery": false
+    },
+    "unit-tests": {
+      "lecture": false,
+      "examples": false,
+      "pset_attempted": false,
+      "pset_done": false,
+      "sidequest": false,
+      "mastery": false
+    },
+    "file-io": {
+      "lecture": false,
+      "examples": false,
+      "pset_attempted": false,
+      "pset_done": false,
+      "sidequest": false,
+      "mastery": false
+    },
+    "regular-expressions": {
+      "lecture": false,
+      "examples": false,
+      "pset_attempted": false,
+      "pset_done": false,
+      "sidequest": false,
+      "mastery": false
+    },
+    "oop": {
+      "lecture": false,
+      "examples": false,
+      "pset_attempted": false,
+      "pset_done": false,
+      "sidequest": false,
+      "mastery": false
+    },
+    "et-cetera": {
+      "lecture": false,
+      "examples": false,
+      "pset_attempted": false,
+      "pset_done": false,
+      "sidequest": false,
+      "mastery": false
+    },
+    "final-project": {
+      "lecture": false,
+      "examples": false,
+      "pset_attempted": false,
+      "pset_done": false,
+      "sidequest": false,
+      "mastery": false
+    }
+  },
+  "sidequests": {
+    "launch-post": {
+      "status": "done",
+      "unit": "functions-variables",
+      "file": "my-code/functions-variables/launch_post.py",
+      "revealed": "2026-09-29T17:38",
+      "level": 2,
+      "scaffold": "full",
+      "hints": 0,
+      "checks": 9,
+      "checks_at_hint": 0,
+      "starter": "d75b388dc7b12b9805350ed23ec183dbf503740c",
+      "completed": "2026-09-29T18:02"
+    }
+  },
+  "recall": {
+    "functions-variables/greet": {
+      "last": "g",
+      "seen": "2026-09-29",
+      "retired": true
+    },
+    "functions-variables/input-type": {
+      "last": "g",
+      "seen": "2026-09-29",
+      "retired": true
+    }
+  },
+  "sessions": {
+    "2026-09-29": {
+      "unit": "functions-variables",
+      "evidence": [
+        "Week 0 Functions, Variables: CS50P problem set work (cs50.dev)",
+        "Week 0 Functions, Variables: sidequest Launch Post (`my-code/functions-variables/launch_post.py`), no hints"
+      ]
+    }
+  },
   "builds": [],
-  "independence": 0,
-  "today": {},
-  "app_seconds": {},
+  "independence": 1,
+  "today": {
+    "date": "2026-09-29",
+    "undo": {
+      "lecture": false,
+      "examples": false,
+      "pset_attempted": false,
+      "pset_done": false,
+      "sidequest": false,
+      "mastery": false
+    },
+    "course_done": true,
+    "unit": "functions-variables",
+    "recall": [
+      "functions-variables/greet",
+      "functions-variables/input-type"
+    ],
+    "rated": [
+      "functions-variables/greet",
+      "functions-variables/input-type"
+    ],
+    "recall_done": true,
+    "finished": "Launch Post",
+    "last_done": "launch-post"
+  },
+  "app_seconds": {
+    "2026-09-29": 300
+  },
   "maintenance_visits": 0
 }
