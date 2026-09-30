@@ -1,98 +1,149 @@
 title = "Token Burn"
 order = 3
-powers = ["def ... return (with two parameters)", "int() / float()", "arithmetic", "f-strings with :,.2f"]
+exact_case = true
+powers = ["several functions that return values", "int() / float()", "arithmetic and percentages", "f-strings:  :.4f  :,.2f  :.1f  :,"]
 
 story = '''
-You're wiring an AI feature into a Clarion product. The model bills per token,
-and a surprise bill is not an option. Before you ship, you want a calculator
-that says what a day and a month will actually cost.
+Clarion is about to ship an AI feature, and your co-founder wants a full cost
+report before launch: prompt caching included, a monthly budget, and the most
+traffic you can afford. A surprise bill is not an option. Every number has to
+be exact.
 '''
 
 task = '''
 Prices (store them in variables in your code):
-  input tokens:   $3.00 per million
-  output tokens:  $15.00 per million
+  input tokens:          $3.00 per million
+  cached input tokens:   $0.30 per million
+  output tokens:         $15.00 per million
 
 Ask for, in this order:
-  1. requests per day
-  2. average input tokens per request
-  3. average output tokens per request
+  1. the model name
+  2. requests per day
+  3. average input tokens per request
+  4. what percent of those input tokens are cached (0 to 100)
+  5. average output tokens per request
+  6. your monthly budget, in dollars
 
-Print exactly two lines, both with 2 decimals and commas for thousands:
-  Per day: $<cost>
-  Per month: $<30 days of that>
+Cached tokens are billed at the cached price INSTEAD of the normal input price.
 
-Write a function cost(tokens, price_per_million) that returns dollars, and use
-it for both the input and the output tokens.
+Print exactly these six lines:
+  COST REPORT: <MODEL NAME IN CAPS, no spaces around it>
+  Per request: $<cost of one request, 4 decimals>
+  Per day: $<2 decimals, commas for thousands>
+  Per month: $<30 days of that, 2 decimals, commas for thousands>
+  Budget used: <the month's cost as a percent of the budget, 1 decimal>%
+  Max requests per day: <most requests a day the budget covers for 30 days,
+                         rounded DOWN to a whole number, commas for thousands>
+
+Write at least two functions that return values, and use them:
+  cost(tokens, price_per_million)   dollars for that many tokens
+  per_request(...)                  dollars for ONE request (it calls cost)
 '''
 
 example = '''
 $ python token_burn.py
+Model:   claude opus
 Requests per day: 1000
 Average input tokens: 1200
+Percent cached: 50
 Average output tokens: 300
-Per day: $8.10
-Per month: $243.00
+Monthly budget: 300
+COST REPORT: CLAUDE OPUS
+Per request: $0.0065
+Per day: $6.48
+Per month: $194.40
+Budget used: 64.8%
+Max requests per day: 1,543
 '''
 
-hint = "Get cost() right on its own first: cost(1000000, 3.00) should give back 3.0. Then call it twice and add."
+hint = "Build it in layers. Get cost() right on its own, then per_request() for ONE request, then scale up to a day, a month, and the budget. Print after every layer while you test."
 
 syntax = '''
 def area(width, height):
     return width * height
 
-1_000_000                 # underscores make big numbers readable
-f"{2025.5:,.2f}"   ->  "2,025.50"
+40 / 100 * 80        ->  32.0      (40 percent of 80)
+int(7.9)             ->  7         (int() drops the decimals: rounds DOWN)
+round(7.9)           ->  8         (round() goes to the NEAREST whole number)
+f"{0.00648:.4f}"     ->  "0.0065"
+f"{64.83:.1f}"       ->  "64.8"
+f"{1543:,}"          ->  "1,543"
 '''
 
 pseudocode = '''
-cost(tokens, price): how many millions of tokens, times the price
+cost(tokens, price): the tokens in millions, times the price
+
+per_request(input tokens, cached percent, output tokens):
+    cached <- input tokens * cached percent / 100
+    fresh  <- input tokens - cached
+    return cost(fresh, input price) + cost(cached, cached price) + cost(output, output price)
 
 main:
-    ask for requests, input tokens, output tokens (as ints)
-    daily input tokens  <- requests * input tokens
-    daily output tokens <- requests * output tokens
-    day <- cost(daily input, 3.00) + cost(daily output, 15.00)
-    print day, then day * 30, each with commas and 2 decimals
+    ask the six questions (strip the model; turn the numbers into int / float)
+    one   <- per_request(...)
+    day   <- one * requests;   month <- day * 30
+    used  <- month / budget * 100
+    most  <- budget / (one * 30), rounded DOWN
+    print the six lines
 '''
 
 extend = [
-  "Add cached input tokens at $0.30 per million as a fourth question.",
-  "Flip it around: on a $20/month budget, how many requests per day can you afford?",
+  "After Week 1: print OVER BUDGET when the month costs more than the budget.",
+  "Compare two models side by side: ask for a second set of three prices.",
 ]
 
 [[checks]]
-name = "The example"
-stdin = "1000\n1200\n300\n"
-expect = ['re:Per day:\s*\$8\.10\b', 're:Per month:\s*\$243\.00\b']
+name = "The example (half the input is cached)"
+stdin = "  claude opus \n1000\n1200\n50\n300\n300\n"
+expect = ["re:COST REPORT: CLAUDE OPUS$", 're:Per request:\s*\$0\.0065\b', 're:Per day:\s*\$6\.48\b',
+          're:Per month:\s*\$194\.40\b', 're:Budget used:\s*64\.8%', 're:Max requests per day:\s*1,543\b']
 show = '''
+COST REPORT: CLAUDE OPUS
+Per request: $0.0065
+Per day: $6.48
+Per month: $194.40
+Budget used: 64.8%
+Max requests per day: 1,543
+'''
+
+[[checks]]
+name = "No caching, and over budget"
+stdin = "SONNET\n1000\n1200\n0\n300\n200\n"
+expect = ["re:COST REPORT: SONNET$", 're:Per request:\s*\$0\.0081\b', 're:Per day:\s*\$8\.10\b',
+          're:Per month:\s*\$243\.00\b', 're:Budget used:\s*121\.5%', 're:Max requests per day:\s*823\b']
+show = '''
+COST REPORT: SONNET
+Per request: $0.0081
 Per day: $8.10
 Per month: $243.00
+Budget used: 121.5%
+Max requests per day: 823
 '''
 
 [[checks]]
-name = "A busy app (needs a thousands comma)"
-stdin = "5000\n2000\n500\n"
-expect = ['re:Per day:\s*\$67\.50\b', 're:Per month:\s*\$2,025\.00\b']
+name = "A busy app (commas for thousands)"
+stdin = "haiku\n5000\n2000\n80\n500\n1000\n"
+expect = ["re:COST REPORT: HAIKU$", 're:Per request:\s*\$0\.0092\b', 're:Per day:\s*\$45\.90\b',
+          're:Per month:\s*\$1,377\.00\b', 're:Budget used:\s*137\.7%', 're:Max requests per day:\s*3,631\b']
 show = '''
-Per day: $67.50
-Per month: $2,025.00
+COST REPORT: HAIKU
+Per request: $0.0092
+Per day: $45.90
+Per month: $1,377.00
+Budget used: 137.7%
+Max requests per day: 3,631
 '''
 
 [[checks]]
-name = "One tiny request (still 2 decimals)"
-stdin = "1\n1\n1\n"
-expect = ['re:Per day:\s*\$0\.00\b', 're:Per month:\s*\$0\.00\b']
+name = "A tiny bot (rounding DOWN, not to the nearest)"
+stdin = "  tiny bot  \n10\n100\n10\n50\n5\n"
+expect = ["re:COST REPORT: TINY BOT$", 're:Per request:\s*\$0\.0010\b', 're:Per day:\s*\$0\.01\b',
+          're:Per month:\s*\$0\.31\b', 're:Budget used:\s*6\.1%', 're:Max requests per day:\s*162\b']
 show = '''
-Per day: $0.00
-Per month: $0.00
-'''
-
-[[checks]]
-name = "A small side project"
-stdin = "400\n500\n250\n"
-expect = ['re:Per day:\s*\$2\.10\b', 're:Per month:\s*\$63\.00\b']
-show = '''
-Per day: $2.10
-Per month: $63.00
+COST REPORT: TINY BOT
+Per request: $0.0010
+Per day: $0.01
+Per month: $0.31
+Budget used: 6.1%
+Max requests per day: 162
 '''
