@@ -76,8 +76,8 @@ class Companion:
         return q, rec
 
     def next_quest(self, u):
-        """Next unfinished sidequest: this unit first, then any left behind in earlier units."""
-        for unit in [u] + self.units[:self.index(u)]:
+        """Next unfinished sidequest: any left behind in earlier units first, then this unit's."""
+        for unit in self.units[:self.index(u)] + [u]:
             for q in content.sidequests(unit["id"]):
                 if q["id"] not in self.s["sidequests"]:
                     return q
