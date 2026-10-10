@@ -103,6 +103,18 @@
       "checks_at_hint": 0,
       "starter": "d75b388dc7b12b9805350ed23ec183dbf503740c",
       "completed": "2026-09-29T18:02"
+    },
+    "one-up-bank": {
+      "status": "active",
+      "unit": "functions-variables",
+      "file": "my-code/functions-variables/one_up_bank.py",
+      "revealed": "2026-09-30T06:59",
+      "level": 1,
+      "scaffold": "light",
+      "hints": 0,
+      "checks": 0,
+      "checks_at_hint": 0,
+      "starter": "67aff66ce072eb361a75ab05cd5d67894f74607c"
     }
   },
   "recall": {
@@ -129,31 +141,11 @@
   "builds": [],
   "independence": 1,
   "today": {
-    "date": "2026-09-29",
-    "undo": {
-      "lecture": false,
-      "examples": false,
-      "pset_attempted": false,
-      "pset_done": false,
-      "sidequest": false,
-      "mastery": false
-    },
-    "course_done": true,
-    "unit": "functions-variables",
-    "recall": [
-      "functions-variables/greet",
-      "functions-variables/input-type"
-    ],
-    "rated": [
-      "functions-variables/greet",
-      "functions-variables/input-type"
-    ],
-    "recall_done": true,
-    "finished": "Launch Post",
-    "last_done": "launch-post"
+    "date": "2026-10-02"
   },
   "app_seconds": {
-    "2026-09-29": 300
+    "2026-09-29": 330,
+    "2026-09-30": 30
   },
   "maintenance_visits": 0
 }
